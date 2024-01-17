@@ -2,8 +2,15 @@
 name = "bye-branch"
 version = "0.1.0"
 edition = "2021"
+authors = ["Yuki Ishii"]
+license = "MIT"
+description = "A tool to delete brachnes with friendly CLI"
+readme = "README.md"
+homepage = "https://github.com/yuki0418/bye-branch"
+repository = "https://github.com/yuki0418/bye-branch"
+keywords = ["cli", "delete", "branch", "git"]
+categories = ["command-line-utilities"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 requestty = "0.5.0"
