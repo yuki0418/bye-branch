@@ -31,10 +31,41 @@ fn delete_branches(branches: Vec<String>) -> i32 {
     count
 }
 
+fn prompt_get_selected_branches(all_branches: &Vec<String>) -> Vec<String> {
+    let question = requestty::Question::multi_select("branches")
+        .message("Select branches to delete")
+        .choices(all_branches)
+        .build();
+
+    let result = match requestty::prompt_one(question) {
+        Ok(result) => result,
+        Err(_) => {
+            println!("Failed to get selected branches");
+            return vec![];
+        }
+    };
+
+    let selected_branches: Vec<String> = result
+        .as_list_items()
+        .unwrap()
+        .iter()
+        .map(|i| i.text.clone())
+        .collect();
+
+    selected_branches
+}
+
 fn main() {
     let ignore_branches = vec!["master", "main"];
     let branches = get_local_branches(ignore_branches);
-    let count = delete_branches(branches);
 
-    println!("{} branches deleted", count);
+    if branches.is_empty() {
+        println!("No branches to delete");
+        return;
+    }
+
+    let selected_branches = prompt_get_selected_branches(&branches);
+    let count = delete_branches(selected_branches);
+
+    println!("{} branches deleted successfully", count);
 }
