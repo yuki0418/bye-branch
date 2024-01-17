@@ -3,8 +3,7 @@
 Remove branches with friendly CLI.
 Easy to use, easy to remove.
 
-<!-- /assets/example_1.png -->
-![example_1](assets/example_1.png)
+![example_1](/assets/example_1.png)
 
 # Installation
 
