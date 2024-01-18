@@ -1,3 +1,4 @@
+use requestty::symbols::SymbolSet;
 use std::process::Command;
 
 fn get_local_branches(ignore_branches: Vec<&str>) -> Vec<String> {
@@ -31,7 +32,28 @@ fn delete_branches(branches: Vec<String>) -> i32 {
     count
 }
 
+// Windows Terminal renders U+2714 "Heavy Check Mark" as a purple emoji which masks the terminal
+// color and makes it impossible to determine if an item is selected or not.
+//
+// See: https://github.com/microsoft/terminal/issues/15592
+//      https://github.com/microsoft/terminal/issues/13110
+//
+// Fortunately, this doesn't affect U+2713 "Check Mark" so for Windows terminal we use that
+// character instead until the emoji issue is fixed.
+const WINDOWS_TERMINAL_SYMBOLS: SymbolSet = SymbolSet {
+    completed: '\u{2713}', // '✓'
+    ..requestty::symbols::UNICODE
+};
+
+fn is_windows_terminal() -> bool {
+    std::env::var("WT_SESSION").is_ok()
+}
+
 fn prompt_get_selected_branches(all_branches: &Vec<String>) -> Vec<String> {
+    if is_windows_terminal() {
+        requestty::symbols::set(WINDOWS_TERMINAL_SYMBOLS);
+    }
+
     let question = requestty::Question::multi_select("branches")
         .message("Select branches to delete")
         .choices(all_branches)
