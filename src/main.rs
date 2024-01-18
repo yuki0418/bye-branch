@@ -35,10 +35,14 @@ fn prompt_get_selected_branches(all_branches: &Vec<String>) -> Vec<String> {
     let question = requestty::Question::multi_select("branches")
         .message("Select branches to delete")
         .choices(all_branches)
+        .on_esc(requestty::OnEsc::Terminate)
         .build();
 
     let result = match requestty::prompt_one(question) {
         Ok(result) => result,
+        Err(requestty::ErrorKind::Aborted) => {
+            return vec![];
+        }
         Err(_) => {
             println!("Failed to get selected branches");
             return vec![];
@@ -65,6 +69,10 @@ fn main() {
     }
 
     let selected_branches = prompt_get_selected_branches(&branches);
+    if selected_branches.is_empty() {
+        return;
+    }
+
     let count = delete_branches(selected_branches);
 
     println!("{} branches deleted successfully", count);
